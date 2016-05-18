@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements LocationListener{
 
     private TextView speedTextView;
+    private TextView locationTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        locationTextView = (TextView)findViewById(R.id.locationTextView);
         speedTextView = (TextView)findViewById(R.id.speedTextView);
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -64,10 +66,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         if(location!=null) {
             if(location.hasSpeed()){
 
-                float mySpeed = location.getSpeed();
+                float msSpeed = location.getSpeed();
+                float kmhSpeed = (msSpeed * 3600) / 1000;
 
-                speedTextView.setText("Current speed: " + mySpeed);
-//                speedTextView.setText("location: " + location.getLatitude() + "," + location.getLongitude());
+                speedTextView.setText("Current speed: " + kmhSpeed + "km/h");
+                locationTextView.setText("location: " + location.getLatitude() + "," + location.getLongitude());
             }
         }
     }
