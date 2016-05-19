@@ -15,10 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import pl.pawelkleczkowski.customgauge.CustomGauge;
+
 public class MainActivity extends AppCompatActivity implements LocationListener{
 
     private TextView speedTextView;
     private TextView locationTextView;
+    private CustomGauge gauge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +32,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
 
         locationTextView = (TextView)findViewById(R.id.locationTextView);
         speedTextView = (TextView)findViewById(R.id.speedTextView);
+        gauge = (CustomGauge)findViewById(R.id.gauge3);
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location == null){
-            Log.e("no gps", "no gps");
-        } else {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1,1,this);
-        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,1,1,this);
     }
 
     @Override
@@ -66,11 +65,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener{
         if(location!=null) {
             if(location.hasSpeed()){
 
-                float msSpeed = location.getSpeed();
-                float kmhSpeed = (msSpeed * 3600) / 1000;
+                int msSpeed = Math.round(location.getSpeed());
+                int kmhSpeed = Math.round((msSpeed * 3600) / 1000);
 
-                speedTextView.setText("Current speed: " + kmhSpeed + "km/h");
-                locationTextView.setText("location: " + location.getLatitude() + "," + location.getLongitude());
+                String locationString = "location: " + location.getLatitude() + "," + location.getLongitude();
+                String kmhSpeedString = kmhSpeed + " km/h";
+                String msSpeedString = msSpeed+ " m/s";
+                speedTextView.setText(kmhSpeedString);
+                locationTextView.setText(locationString);
+                gauge.setValue(kmhSpeed);
             }
         }
     }
